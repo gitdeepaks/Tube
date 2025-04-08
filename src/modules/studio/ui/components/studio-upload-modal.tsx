@@ -2,13 +2,32 @@
 
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/trpc/client";
-import { PlusIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon } from "lucide-react";
+import { toast } from "sonner";
 
 export const StudioUploadModal = () => {
-  const create = trpc.videos.create.useMutation();
+  const utils = trpc.useUtils();
+  const create = trpc.videos.create.useMutation({
+    onSuccess: () => {
+      toast.success("Video created successfully");
+      utils.studio.getMany.invalidate();
+    },
+    onError: (err) => {
+      toast.error(err.message);
+    },
+  });
   return (
-    <Button variant="secondary" onClick={() => create.mutate()}>
-      <PlusIcon />
+    <Button
+      className="cursor-pointer"
+      variant="secondary"
+      onClick={() => create.mutate()}
+      disabled={create.isPending}
+    >
+      {create.isPending ? (
+        <Loader2Icon className="size-4 mr-2 animate-spin" />
+      ) : (
+        <PlusIcon />
+      )}
       Create
     </Button>
   );
