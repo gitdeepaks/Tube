@@ -1,4 +1,4 @@
-import VideosSection from "../section/video-section";
+import VideosSection from "../sections/video-section";
 
 export default function StudioView() {
   return (
