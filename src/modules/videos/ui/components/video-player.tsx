@@ -1,5 +1,6 @@
 "use client";
 import MuxPlayer from "@mux/mux-player-react";
+import { THUMBNAIL_FALLBACK_URL } from "../../contants";
 
 interface VideoPlayerProps {
   playbackId?: string | null | undefined;
@@ -15,11 +16,18 @@ export const VideoPlayer = ({
   onPlay,
 }: VideoPlayerProps) => {
   if (!playbackId) return null;
+
+  // Ensure we have a valid URL
+  const validThumbnailUrl =
+    thumbnailUrl && thumbnailUrl.startsWith("http")
+      ? thumbnailUrl
+      : THUMBNAIL_FALLBACK_URL;
+
   return (
     <div className="aspect-video overflow-hidden relative">
       <MuxPlayer
         playbackId={playbackId}
-        poster={thumbnailUrl || "/placeholder.svg"}
+        poster={validThumbnailUrl}
         playerInitTime={0}
         thumbnailTime={0}
         onPlay={onPlay}
