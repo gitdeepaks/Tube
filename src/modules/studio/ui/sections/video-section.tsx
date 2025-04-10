@@ -49,14 +49,32 @@ const VideoSectionSkeletion = () => {
           <TableBody>
             {Array.from({ length: 7 }).map((_, index) => (
               <TableRow key={index}>
-                <TableCell colSpan={7} className="pl-6">
-                  <Skeleton className="h-20 w-36" />
+                <TableCell>
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="relative aspect-video w-36 shrink-0" />
+                    <div className="flex flex-col overflow-hidden gap-y-1">
+                      <Skeleton className="h-4 w-48" />
+                      <Skeleton className="h-3 w-32" />
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Skeleton className="h-4 w-24" />
                 </TableCell>
                 <TableCell>
                   <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell>
+                  <Skeleton className="h-4 w-24" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="h-4 w-12 ml-auto" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="h-4 w-12 ml-auto" />
+                </TableCell>
+                <TableCell className="text-right">
+                  <Skeleton className="h-4 w-12 ml-auto" />
                 </TableCell>
               </TableRow>
             ))}
