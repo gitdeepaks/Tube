@@ -51,6 +51,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { ThumbnailGenerateModal } from "../components/thumbnail-generate-modal";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
 
 interface FormSectionProps {
@@ -68,7 +69,64 @@ export const FormSection = ({ videoId }: FormSectionProps) => {
 };
 
 const FormSectionSkeleton = () => {
-  return <div>Loading...</div>;
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="h-8 w-48 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-4 w-32 bg-gray-200 rounded mt-1 animate-pulse"></div>
+        </div>
+        <div className="flex items-center gap-x-2">
+          <div className="h-10 w-20 bg-gray-200 rounded animate-pulse"></div>
+          <div className="h-10 w-10 bg-gray-200 rounded animate-pulse"></div>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="space-y-8 lg:col-span-3">
+          {/* Title field skeleton */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-x-2">
+              <div className="h-5 w-16 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+            </div>
+            <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+          </div>
+
+          {/* Description field skeleton */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-x-2">
+              <div className="h-5 w-24 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+            </div>
+            <div className="h-40 w-full bg-gray-200 rounded animate-pulse"></div>
+          </div>
+
+          {/* Thumbnail field skeleton */}
+          <div className="space-y-2">
+            <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div className="p-0.5 border border-dashed border-neutral-400 relative h-[84px] w-[153px] bg-gray-200 animate-pulse"></div>
+          </div>
+
+          {/* Category field skeleton */}
+          <div className="space-y-2">
+            <div className="h-5 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* Video player skeleton */}
+        <div className="flex flex-col gap-y-8 lg:col-span-2">
+          <div className="flex flex-col gap-4 bg-gray-100 rounded-xl overflow-hidden h-fit">
+            <div className="aspect-video bg-gray-200 animate-pulse"></div>
+            <div className="px-4 py-4 flex flex-col gap-y-6">
+              <div className="h-5 w-24 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-10 w-full bg-gray-200 rounded animate-pulse"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
@@ -78,6 +136,8 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
   const router = useRouter();
 
   const [thumbnailUploadModalOpen, setThumbnailUploadModalOpen] =
+    useState(false);
+  const [thumbnailGenerateModalOpen, setThumbnailGenerateModalOpen] =
     useState(false);
 
   const update = trpc.videos.update.useMutation({
@@ -124,16 +184,16 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     },
   });
 
-  const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
-    onSuccess: () => {
-      toast.success("Background job started", {
-        description: "This may take a few minutes",
-      });
-    },
-    onError: () => {
-      toast.error("Failed to generate thumbnail");
-    },
-  });
+  // const generateThumbnail = trpc.videos.generateThumbnail.useMutation({
+  //   onSuccess: () => {
+  //     toast.success("Background job started", {
+  //       description: "This may take a few minutes",
+  //     });
+  //   },
+  //   onError: () => {
+  //     toast.error("Failed to generate thumbnail");
+  //   },
+  // });
 
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
@@ -172,6 +232,11 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
   return (
     <>
+      <ThumbnailGenerateModal
+        open={thumbnailGenerateModalOpen}
+        onOpenChange={setThumbnailGenerateModalOpen}
+        videoId={videoId}
+      />
       <ThumbnailUploadModal
         open={thumbnailUploadModalOpen}
         onOpenChange={setThumbnailUploadModalOpen}
@@ -332,7 +397,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() =>
-                                generateThumbnail.mutate({ id: videoId })
+                                setThumbnailGenerateModalOpen(true)
                               }
                             >
                               <SparkleIcon className="size-4 mr-2" />
