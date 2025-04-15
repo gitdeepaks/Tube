@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { UserAvatar } from "@/components/user-avatar";
+import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -19,16 +20,26 @@ import { z } from "zod";
 const commentFormSchema = z.object({
   videoId: z.string().uuid(),
   value: z.string().min(1),
+  parentId: z.string().uuid().optional(),
 });
 
 type CommentFormValues = z.infer<typeof commentFormSchema>;
 
 interface CommentFormProps {
   videoId: string;
+  parentId?: string;
   onSuccess?: () => void;
+  onCancel?: () => void;
+  variant?: "comment" | "reply";
 }
 
-export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
+export const CommentForm = ({
+  videoId,
+  onSuccess,
+  parentId,
+  variant = "comment",
+  onCancel,
+}: CommentFormProps) => {
   const { user } = useUser();
   const clerk = useClerk();
   const utils = trpc.useUtils();
@@ -38,12 +49,14 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
     defaultValues: {
       videoId,
       value: "",
+      parentId,
     },
   });
 
   const create = trpc.comments.create.useMutation({
     onSuccess: () => {
       utils.comments.getMany.invalidate({ videoId });
+      utils.comments.getMany.invalidate({ videoId, parentId });
       form.reset();
       toast.success("Comment created");
       onSuccess?.();
@@ -58,14 +71,23 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
   });
 
   const onSubmit = (data: CommentFormValues) => {
-    create.mutate(data);
+    create.mutate({
+      videoId: data.videoId,
+      value: data.value,
+      ...(parentId ? { parentId } : {}),
+    });
+  };
+
+  const handleCancel = () => {
+    form.reset();
+    onCancel?.();
   };
 
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-4 group">
         <UserAvatar
-          size="lg"
+          size={variant === "reply" ? "md" : "lg"}
           imageUrl={user?.imageUrl || "/user-placeholder.svg"}
           name={user?.username || "User"}
         />
@@ -78,8 +100,15 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="Add a comment..."
-                    className="resize-none bg-transparent overflow-hidden min-h-0 h-20"
+                    placeholder={
+                      variant === "comment"
+                        ? "Add a comment..."
+                        : "Add a reply..."
+                    }
+                    className={cn(
+                      "resize-none bg-transparent overflow-hidden min-h-0",
+                      variant === "reply" ? "h-14" : "h-20"
+                    )}
                     rows={1}
                   />
                 </FormControl>
@@ -89,8 +118,25 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
           />
 
           <div className="justify-end gap-2 mt-2 flex">
-            <Button disabled={create.isPending} type="submit" size="sm">
-              {create.isPending ? "Commenting..." : "Comment"}
+            {variant === "reply" && (
+              <Button
+                disabled={create.isPending}
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={handleCancel}
+                className="hover:bg-secondary/80 rounded-full h-8"
+              >
+                Cancel
+              </Button>
+            )}
+            <Button
+              disabled={create.isPending}
+              type="submit"
+              size="sm"
+              className="rounded-full h-8"
+            >
+              {variant === "reply" ? "Reply" : "Comment"}
             </Button>
           </div>
         </div>

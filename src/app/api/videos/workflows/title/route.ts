@@ -43,7 +43,7 @@ export const { POST } = serve(async (context) => {
     token: process.env.OPENAI_API_KEY!,
     operation: "chat.completions.create",
     body: {
-      model: "gpt-4o",
+      model: "gpt-4.1",
       messages: [
         {
           role: "system",
