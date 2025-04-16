@@ -39,6 +39,7 @@ import {
   LockIcon,
   MoreVerticalIcon,
   RefreshCwIcon,
+  RotateCcwSquare,
   SparkleIcon,
   SparklesIcon,
   TrashIcon,
@@ -132,7 +133,7 @@ const FormSectionSkeleton = () => {
 const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
   const [video] = trpc.studio.getOne.useSuspenseQuery({ id: videoId });
   const [categories] = trpc.categories.getMany.useSuspenseQuery();
-  const ustils = trpc.useUtils();
+  const utils = trpc.useUtils();
   const router = useRouter();
 
   const [thumbnailUploadModalOpen, setThumbnailUploadModalOpen] =
@@ -142,8 +143,8 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
   const update = trpc.videos.update.useMutation({
     onSuccess: () => {
-      ustils.studio.getMany.invalidate();
-      ustils.studio.getOne.invalidate({ id: videoId });
+      utils.studio.getMany.invalidate();
+      utils.studio.getOne.invalidate({ id: videoId });
       toast.success("Video updated successfully");
     },
     onError: () => {
@@ -151,9 +152,20 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     },
   });
 
+  const revalidate = trpc.videos.revalidate.useMutation({
+    onSuccess: () => {
+      utils.studio.getMany.invalidate();
+      utils.studio.getOne.invalidate({ id: videoId });
+      toast.success("Video revalidated successfully");
+    },
+    onError: () => {
+      toast.error("Failed to revalidate video");
+    },
+  });
+
   const remove = trpc.videos.remove.useMutation({
     onSuccess: () => {
-      ustils.studio.getMany.invalidate();
+      utils.studio.getMany.invalidate();
       toast.success("Video deleted successfully");
       router.push("/studio");
     },
@@ -197,8 +209,8 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
 
   const restoreThumbnail = trpc.videos.restoreThumbnail.useMutation({
     onSuccess: () => {
-      ustils.studio.getMany.invalidate();
-      ustils.studio.getOne.invalidate({ id: videoId });
+      utils.studio.getMany.invalidate();
+      utils.studio.getOne.invalidate({ id: videoId });
       toast.success("Thumbnail restored successfully");
     },
     onError: () => {
@@ -263,12 +275,19 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                     <MoreVerticalIcon />
                   </Button>
                 </DropdownMenuTrigger>
+
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem
                     onClick={() => remove.mutate({ id: videoId })}
                   >
                     <TrashIcon className="size-4 mr-2" />
                     Delete
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => revalidate.mutate({ id: videoId })}
+                  >
+                    <RotateCcwSquare className="size-4 mr-2" />
+                    Re-validate
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -541,4 +560,4 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
   );
 };
 
-// 30:28
+// 14:25
