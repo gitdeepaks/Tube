@@ -187,7 +187,14 @@ export const videosRouter = createTRPCRouter({
         });
       }
 
-      const playbackId = asset.playback_ids[0].id;
+      const playbackId = asset.playback_ids?.[0]?.id;
+
+      if (!playbackId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Video has no playback ID",
+        });
+      }
 
       const [updatedVideo] = await db
         .update(videos)
