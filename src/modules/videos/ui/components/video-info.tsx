@@ -1,3 +1,4 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { UserAvatar } from "@/components/user-avatar";
 import { UserInfo } from "@/modules/users/ui/components/user-info";
 import { formatDistanceToNow } from "date-fns";
@@ -10,6 +11,19 @@ interface VideoInfoProps {
   data: VideoGetManyOutput["items"][number];
   onRemove?: () => void;
 }
+
+export const VideoInfoSkeleton = () => {
+  return (
+    <div className="flex gap-3">
+      <Skeleton className="w-10 h-10 rounded-full flex-shrink-0" />
+      <div className="flex-1">
+        <Skeleton className="w-24 h-4 mb-2" />
+        <Skeleton className="w-32 h-4" />
+        <Skeleton className="w-24 h-4 mt-2" />
+      </div>
+    </div>
+  );
+};
 
 export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
   const compactViews = useMemo(() => {

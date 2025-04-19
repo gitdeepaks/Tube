@@ -58,6 +58,7 @@ export const suggestionsRouter = createTRPCRouter({
         .where(
           and(
             not(eq(videos.id, existingVideo.id)),
+            eq(videos.visibility, "PUBLIC"),
             existingVideo.categoryId
               ? eq(videos.categoryId, existingVideo.categoryId)
               : undefined,
@@ -96,3 +97,5 @@ export const suggestionsRouter = createTRPCRouter({
       };
     }),
 });
+
+// 16:31
