@@ -54,6 +54,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ThumbnailGenerateModal } from "../components/thumbnail-generate-modal";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
+import { APP_URL } from "@/constants";
 
 interface FormSectionProps {
   videoId: string;
@@ -228,7 +229,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
   };
 
   // TODO:change if deploying outside of vercel
-  const fullUrl = `${process.env.NEXT_PUBLIC_VERCEL_URL}/videos/${videoId}`;
+  const fullUrl = `${APP_URL}/videos/${videoId}`;
 
   const [copied, setCopied] = useState(false);
 
