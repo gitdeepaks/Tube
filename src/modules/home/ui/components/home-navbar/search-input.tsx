@@ -3,11 +3,14 @@
 import { Button } from "@/components/ui/button";
 import { APP_URL } from "@/constants";
 import { SearchIcon, XIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export const SearchInput = () => {
-  const [value, setValue] = useState("");
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query") || "";
+  const categoryId = searchParams.get("categoryId") || "";
+  const [value, setValue] = useState(query);
   const router = useRouter();
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,6 +19,10 @@ export const SearchInput = () => {
     const url = new URL("/search", APP_URL);
 
     const newQuery = value.trim();
+
+    if (categoryId) {
+      url.searchParams.set("categoryId", categoryId);
+    }
 
     // Don't encode the query here, let the browser handle it
     if (newQuery !== "") {
