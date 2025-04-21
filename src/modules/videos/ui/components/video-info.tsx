@@ -3,7 +3,7 @@ import { UserAvatar } from "@/components/user-avatar";
 import { UserInfo } from "@/modules/users/ui/components/user-info";
 import { formatDistanceToNow } from "date-fns";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { VideoGetManyOutput } from "../../types";
 import { VideoMenu } from "./video-menu";
 
@@ -25,6 +25,21 @@ export const VideoInfoSkeleton = () => {
   );
 };
 
+// Client-side only component for date formatting
+const ClientDateFormatter = ({ date }: { date: Date }) => {
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    setFormattedDate(
+      formatDistanceToNow(date, {
+        addSuffix: true,
+      })
+    );
+  }, [date]);
+
+  return <>{formattedDate}</>;
+};
+
 export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
   const compactViews = useMemo(() => {
     return Intl.NumberFormat("en-US", {
@@ -33,11 +48,8 @@ export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
     }).format(data.viewCount);
   }, [data.viewCount]);
 
-  const compactDate = useMemo(() => {
-    return formatDistanceToNow(data.createdAt, {
-      addSuffix: true,
-    });
-  }, [data.createdAt]);
+  const createdAt = new Date(data.createdAt);
+  const initialDate = createdAt.toLocaleDateString();
 
   return (
     <div className="flex gap-3">
@@ -56,7 +68,12 @@ export const VideoInfo = ({ data, onRemove }: VideoInfoProps) => {
           </Link>
           <Link href={`/videos/${data.id}`}>
             <p className="text-sm text-gray-500 line-clamp-1">
-              {compactViews} views • {compactDate}
+              {compactViews} views •{" "}
+              <span suppressHydrationWarning>{initialDate}</span>
+              <span className="hidden md:inline">
+                {" "}
+                <ClientDateFormatter date={createdAt} />
+              </span>
             </p>
           </Link>
         </div>

@@ -1,5 +1,6 @@
 import { VideoGetManyOutput } from "@/modules/videos/types";
 import Link from "next/link";
+import { Suspense } from "react";
 import { VideoInfo, VideoInfoSkeleton } from "./video-info";
 import { VideoThumbnail, VideoThumbnailSkeleton } from "./video-thumbnail";
 
@@ -29,7 +30,9 @@ export const VideoGridCard = ({ data, onRemove }: VideoGridCardProps) => {
         />
       </Link>
 
-      <VideoInfo data={data} onRemove={onRemove} />
+      <Suspense fallback={<VideoInfoSkeleton />}>
+        <VideoInfo data={data} onRemove={onRemove} />
+      </Suspense>
     </div>
   );
 };
