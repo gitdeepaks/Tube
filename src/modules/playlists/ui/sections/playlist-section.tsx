@@ -2,6 +2,7 @@
 
 import { InfiniteScroll } from "@/components/infinite-scroll";
 import { DEFAULT_LIMIT } from "@/constants";
+import { THUMBNAIL_FALLBACK_URL } from "@/modules/videos/contants";
 import { trpc } from "@/trpc/client";
 import { Suspense } from "react";
 import { ErrorBoundary } from "react-error-boundary";
@@ -49,7 +50,11 @@ const PlaylistSectionSuspense = () => {
         {data.pages
           .flatMap((page) => page.items)
           .map((playlist) => (
-            <PlaylistGridCard key={playlist.id} playlist={playlist} />
+            <PlaylistGridCard
+              imageUrl={playlist.thumbnailUrl || THUMBNAIL_FALLBACK_URL}
+              key={playlist.id}
+              playlist={playlist}
+            />
           ))}
       </div>
 

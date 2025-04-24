@@ -9,6 +9,7 @@ import {
 
 interface PlaylistGridCardProps {
   playlist: PlaylistGetManyOutputs["items"][number];
+  imageUrl: string;
 }
 
 export const PlaylistGridCardSkeleton = () => {
@@ -20,13 +21,16 @@ export const PlaylistGridCardSkeleton = () => {
   );
 };
 
-export const PlaylistGridCard = ({ playlist }: PlaylistGridCardProps) => {
+export const PlaylistGridCard = ({
+  playlist,
+  imageUrl,
+}: PlaylistGridCardProps) => {
   return (
     <Link href={`/playlists/${playlist.id}`}>
       <div className="flex flex-col gap-2 w-full group">
         <h3 className="text-lg font-semibold">
           <PlaylistThumbnail
-            imageUrl={THUMBNAIL_FALLBACK_URL}
+            imageUrl={imageUrl || THUMBNAIL_FALLBACK_URL}
             title={playlist.name}
             videoCount={playlist.videoCount}
           />
