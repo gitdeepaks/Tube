@@ -113,11 +113,7 @@ function VideosSectionSuspense() {
             {data.pages
               .flatMap((page) => page.items)
               .map((video) => (
-                <Link
-                  href={`/studio/videos/${video.id}`}
-                  key={video.id}
-                  legacyBehavior
-                >
+                <Link href={`/studio/videos/${video.id}`} key={video.id}>
                   <TableRow className="cursor-pointer">
                     <TableCell>
                       <div className="flex items-center gap-4 ">
@@ -133,7 +129,7 @@ function VideosSectionSuspense() {
                           <span className="text-sm line-clamp-1">
                             {video.title}
                           </span>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs line-clamp-1 text-muted-foreground truncate-text ">
                             {video.description || "No description"}
                           </span>
                         </div>
@@ -157,9 +153,15 @@ function VideosSectionSuspense() {
                     <TableCell className="text-sm truncate">
                       {video.createdAt.toLocaleDateString()}
                     </TableCell>
-                    <TableCell className="text-right">views</TableCell>
-                    <TableCell className="text-right">comments</TableCell>
-                    <TableCell className="text-right">likes</TableCell>
+                    <TableCell className="text-right">
+                      {video.viewCount}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {video.commentCount}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {video.likeCount}
+                    </TableCell>
                   </TableRow>
                 </Link>
               ))}
