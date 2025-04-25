@@ -19,3 +19,9 @@ export const snakeCaseToTitle = (str: string) => {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
 };
+
+export function truncateWords(text: string, wordCount: number = 7): string {
+  const words = text.split(/\s+/);
+  if (words.length <= wordCount) return text;
+  return words.slice(0, wordCount).join(" ") + "...";
+}

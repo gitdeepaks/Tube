@@ -11,7 +11,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { DEFAULT_LIMIT } from "@/constants";
-import { snakeCaseToTitle } from "@/lib/utils";
+import { snakeCaseToTitle, truncateWords } from "@/lib/utils";
 import { VideoThumbnail } from "@/modules/videos/ui/components/video-thumbnail";
 
 import { trpc } from "@/trpc/client";
@@ -131,10 +131,10 @@ function VideosSectionSuspense() {
                       </div>
                       <div className="flex flex-col overflow-hidden gap-y-1">
                         <span className="text-sm line-clamp-1">
-                          {video.title}
+                          {truncateWords(video.title)}
                         </span>
                         <span className="text-xs line-clamp-1 text-muted-foreground truncate-text truncate">
-                          {video.description || "No description"}
+                          {truncateWords(video.description || "No description")}
                         </span>
                       </div>
                     </div>
@@ -155,7 +155,11 @@ function VideosSectionSuspense() {
                     </div>
                   </TableCell>
                   <TableCell className="text-sm truncate">
-                    {video.createdAt.toLocaleDateString()}
+                    {video.createdAt.toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "2-digit",
+                      day: "2-digit",
+                    })}
                   </TableCell>
                   <TableCell className="text-right">
                     {video.viewCount}
