@@ -95,7 +95,11 @@ export const CommentItem = ({
   return (
     <div className="flex flex-col gap-3 w-full">
       <div className="flex gap-3">
-        <Link href={`/users/${comment.userId}`} className="flex-shrink-0">
+        <Link
+          prefetch
+          href={`/users/${comment.userId}`}
+          className="flex-shrink-0"
+        >
           <UserAvatar
             imageUrl={comment.user.imageUrl}
             name={comment.user.name}
@@ -104,6 +108,7 @@ export const CommentItem = ({
         </Link>
         <div className="flex-1 min-w-0">
           <Link
+            prefetch
             href={`/users/${comment.userId}`}
             className="inline-flex items-center gap-2"
           >

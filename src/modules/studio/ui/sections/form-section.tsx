@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { APP_URL } from "@/constants";
 import { videoUpdateSchema } from "@/database/schema";
 import { snakeCaseToTitle } from "@/lib/utils";
 import { THUMBNAIL_FALLBACK_URL } from "@/modules/videos/contants";
@@ -54,7 +55,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ThumbnailGenerateModal } from "../components/thumbnail-generate-modal";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
-import { APP_URL } from "@/constants";
 
 interface FormSectionProps {
   videoId: string;
@@ -479,7 +479,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                         Video link
                       </p>
                       <div className="flex items-center gap-x-2">
-                        <Link href={`/videos/${video.id}`}>
+                        <Link prefetch href={`/videos/${video.id}`}>
                           <p className="text-blue-600 line-clamp-1 text-sm">
                             {fullUrl}
                           </p>
